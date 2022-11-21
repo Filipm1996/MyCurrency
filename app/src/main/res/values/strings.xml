@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MyCurrency</string>
+    <string name="negative_button_text">Nie</string>
+    <string name="possitive_button_text">Tak</string>
+</resources>
