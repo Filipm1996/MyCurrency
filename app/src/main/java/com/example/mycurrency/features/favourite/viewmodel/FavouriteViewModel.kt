@@ -93,26 +93,30 @@ class FavouriteViewModel @Inject constructor(
         }
 
     fun getCurrencyRateByName(localDate: LocalDate, currency: Currency) {
-        if(currency.typeOfCurrency == "crypto"){
-            viewModelScope.launch {
+        viewModelScope.launch {
+            if (currency.typeOfCurrency == "crypto") {
                 val unixFrom =
-                    localDate.minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
+                    localDate.minusDays(1).atStartOfDay(ZoneId.systemDefault())
+                        .toInstant().epochSecond
                 val unixTo = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
                 val response =
                     networkRepository.getSingleRecordFromCoinGecko(currency, unixFrom, unixTo)
                 when (response) {
-                    is Resource.Success -> currencyToShow.value = response.data
+                    is Resource.Success -> {
+                        currencyToShow.value = response.data
+                    }
                     else -> {
                         error.value = response.message ?: "error"
                     }
                 }
-            }
-        }else {
-            viewModelScope.launch {
+            } else {
                 val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
                 val formattedDate = localDate.format(formatter)
                 val response =
-                    networkRepository.getSingleRecordFromNBPByTime(currency.shortName, formattedDate.toString())
+                    networkRepository.getSingleRecordFromNBPByTime(
+                        currency.shortName,
+                        formattedDate.toString()
+                    )
                 when (response) {
                     is Resource.Success -> currencyToShow.value = response.data
                     else -> error.value = response.message ?: "error"
@@ -143,7 +147,10 @@ class FavouriteViewModel @Inject constructor(
 
     private fun checkIfDateIsRight(listOfCurrencies: List<Currency>): Boolean {
         return if (listOfCurrencies.isNotEmpty()) {
-            ChronoUnit.HOURS.between(todaysDate, convertToDate(listOfCurrencies[0].addDate)) >= 6
+            ChronoUnit.HOURS.between(
+                todaysDate,
+                convertToDate(listOfCurrencies[0].addDate)
+            ) >= 6
         } else {
             false
         }

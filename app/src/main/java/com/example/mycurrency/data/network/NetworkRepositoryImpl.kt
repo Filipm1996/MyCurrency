@@ -43,27 +43,24 @@ class NetworkRepositoryImpl @Inject constructor(
     override suspend fun getSingleRecordFromCoinGecko(
         currency: Currency,
         from: Long,
-        to : Long
+        to: Long
     ): Resource<Currency> {
         return try {
-            println(currency.idCoingGecko!!)
-            println(from)
-            println(to)
-            val response = coinGeckoAPI.getSingleRecordFromCoinGeckoByTime(currency.idCoingGecko!!, from, to)
+            val response =
+                coinGeckoAPI.getSingleRecordFromCoinGeckoByTime(currency.idCoingGecko!!, from, to)
             val length = response.prices.size
-            val price = String.format("%.4f", response.prices[length-1][1])
+            val price = String.format("%.4f", response.prices[length - 1][1])
             price.replace(",", ".")
             val currency = Currency(
                 name = currency.name,
                 shortName = currency.shortName,
                 idCoingGecko = currency.idCoingGecko,
                 rate = price,
-                typeOfCurrency = "normal",
+                typeOfCurrency = "crypto",
                 addDate = todaysDate.toString()
             )
             Resource.Success(currency)
         } catch (e: Exception) {
-            println(e.message?: "error")
             Resource.Error(e.message ?: "Error")
         }
     }
@@ -92,7 +89,10 @@ class NetworkRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSingleRecordFromNBPByTime(name: String, date: String): Resource<Currency> {
+    override suspend fun getSingleRecordFromNBPByTime(
+        name: String,
+        date: String
+    ): Resource<Currency> {
         return try {
             val response = nbPapi.getSingleRecordByTime(name, date)
             val currency = Currency(

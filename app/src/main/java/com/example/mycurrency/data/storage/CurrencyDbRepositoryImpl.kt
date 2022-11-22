@@ -5,7 +5,7 @@ import com.example.mycurrency.data.storage.entities.Currency
 import javax.inject.Inject
 
 class CurrencyDbRepositoryImpl @Inject constructor(
-    private val nbpDao : CurrencyDao,
+    private val nbpDao: CurrencyDao,
     private val cryptoDao: CurrencyDao,
     private val myDao: CurrencyDao
 ) : CurrencyDbRepository {
@@ -35,7 +35,8 @@ class CurrencyDbRepositoryImpl @Inject constructor(
 
     // crypto Database
 
-    override suspend fun insertCryptoCurrency(currency: Currency) = cryptoDao.insertCurrency(currency)
+    override suspend fun insertCryptoCurrency(currency: Currency) =
+        cryptoDao.insertCurrency(currency)
 
     override suspend fun getCryptoAllCurrencies() = cryptoDao.getAllCurrencies()
 

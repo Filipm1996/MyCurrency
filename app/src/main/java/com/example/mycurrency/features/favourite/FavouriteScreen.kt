@@ -37,13 +37,12 @@ import java.time.LocalDate
 fun FavouriteScreen(
     viewModel : FavouriteViewModel = hiltViewModel()
 ) {
-
+    val showInfoCurrencyDialogState = remember {
+        mutableStateOf(false)
+    }
     val currencyToShow = viewModel.currencyToShow
     val dateInDialog = remember {
         mutableStateOf(LocalDate.now())
-    }
-    val showInfoCurrencyDialogState = remember {
-        mutableStateOf(false)
     }
     val context = LocalContext.current
     var text by rememberSaveable { mutableStateOf("") }
@@ -181,7 +180,7 @@ fun FavouriteScreen(
                                         Toast
                                             .makeText(
                                                 context,
-                                                "Nie znamy przyszłości :)",
+                                                "Też bym chciał wiedzieć :)!",
                                                 Toast.LENGTH_SHORT
                                             )
                                             .show()
