@@ -31,7 +31,7 @@ class NbpViewModel @Inject constructor(
         val item = listOfMyCurrencies.findLast { it.name == currency.name }
         if (item == null) {
             currencyDbRepository.insertMyCurrency(currency)
-        }else {
+        } else {
             error.value = "Waluta jest juz dodana"
         }
     }
@@ -55,30 +55,51 @@ class NbpViewModel @Inject constructor(
     fun getAPIRecords() {
         viewModelScope.launch {
             loading.value = true
-            val response1 = getRecordsFromNBP()
-            if (response1 is Resource.Error) {
-                error.value = response1.message ?: "error"
-                loading.value = false
-            } else {
-                response1.data?.forEach {
-                    if (!listOfCurrenciesToDisplay.contains(it)) {
-                        listOfCurrenciesToDisplay.add(it)
+            val listFromDb = currencyDbRepository.getNBPAllCurrencies()
+            if (checkValid(listFromDb)) {
+                val response1 = getRecordsFromNBP()
+                if (response1 is Resource.Error) {
+                    error.value = response1.message ?: "error"
+                    loading.value = false
+                } else {
+                    response1.data?.forEach {
+                        currencyDbRepository.insertNBPCurrency(it)
+                        if (!listOfCurrenciesToDisplay.contains(it)) {
+                            listOfCurrenciesToDisplay.add(it)
+                        }
                     }
+                    loading.value = false
                 }
+            } else {
+                listFromDb.forEach { listOfCurrenciesToDisplay.add(it) }
                 loading.value = false
             }
         }
     }
 
-    fun getSingleRecordByDate(name: String, date : LocalDate) {
+    fun getSingleRecordByDate(name: String, date: LocalDate) {
         viewModelScope.launch {
             val formattedDate = date.format(formatter)
-            val response = networkRepository.getSingleRecordFromNBPByTime(name, formattedDate.toString())
-            when (response){
+            val response =
+                networkRepository.getSingleRecordFromNBPByTime(name, formattedDate.toString())
+            when (response) {
                 is Resource.Success -> currencyToShow.value = response.data
                 else -> error.value = response.message ?: "error"
             }
         }
     }
 
+    private fun checkValid(listFromDb: List<Currency>): Boolean {
+        val today = LocalDateTime.now()
+        return if (listFromDb.isEmpty()) {
+            true
+        } else if (today.dayOfYear != LocalDateTime.parse(listFromDb[0].addDate).dayOfYear) {
+            viewModelScope.launch {
+                currencyDbRepository.deleteCryptoCurrencies()
+            }
+            true
+        } else {
+            false
+        }
+    }
 }

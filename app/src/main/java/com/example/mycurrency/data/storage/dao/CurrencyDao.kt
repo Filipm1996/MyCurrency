@@ -18,7 +18,7 @@ interface CurrencyDao {
     fun deleteCurrencyByName (name : String)
 
     @Query("DELETE FROM currencyTable")
-    fun deleteAll()
+    suspend fun deleteAll()
 
     @Query("UPDATE currencyTable SET rate = :rate AND addDate = :addDate WHERE name = :name")
     suspend fun updateRate(rate:String, addDate : String, name: String)

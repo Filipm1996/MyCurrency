@@ -10,7 +10,19 @@ interface CurrencyDbRepository {
 
     fun deleteMyCurrencyByName (name : String)
 
-    fun deleteMyCurrencies()
+    suspend fun deleteMyCurrencies()
 
     suspend fun updateCurrency(name : String, date : String, rate: String)
+
+    suspend fun insertNBPCurrency(currency: Currency)
+
+    suspend fun getNBPAllCurrencies(): List<Currency>
+
+    suspend fun deleteNBPCurrencies()
+
+    suspend fun insertCryptoCurrency(currency: Currency)
+
+    suspend fun getCryptoAllCurrencies(): List<Currency>
+
+    suspend fun deleteCryptoCurrencies()
 }

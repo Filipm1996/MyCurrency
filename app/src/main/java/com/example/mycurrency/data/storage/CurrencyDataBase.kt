@@ -7,11 +7,10 @@ import com.example.mycurrency.data.storage.entities.Currency
 
 @Database(
     entities =[Currency::class],
-    version = 2,
+    version =1,
     exportSchema = false
 )
 
 abstract class CurrencyDataBase : RoomDatabase() {
     abstract fun currencyDao(): CurrencyDao
-
 }

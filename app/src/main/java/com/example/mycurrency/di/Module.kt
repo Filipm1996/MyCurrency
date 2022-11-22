@@ -18,6 +18,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
@@ -48,23 +50,71 @@ object Module {
         coinGeckoAPI: CoinGeckoAPI
     ): NetworkRepository = NetworkRepositoryImpl(coinGeckoAPI, nbPapi)
 
+    @myList
     @Singleton
     @Provides
-    fun provideCurrencyDateBase(
+    fun provideMyCurrencyDateBase(
         @ApplicationContext context: Context
     ): CurrencyDataBase =
         Room.databaseBuilder(context, CurrencyDataBase::class.java, Constants.MY_LIST_DATABASE)
             .fallbackToDestructiveMigration().build()
 
+    @cryptoList
     @Singleton
     @Provides
-    fun provideCurrencyDao(
-        currencyDataBase: CurrencyDataBase
-    ) : CurrencyDao = currencyDataBase.currencyDao()
+    fun provideCryptoCurrencyDateBase(
+        @ApplicationContext context: Context
+    ): CurrencyDataBase =
+        Room.databaseBuilder(context, CurrencyDataBase::class.java, Constants.CRYPTO_DATABASE)
+            .fallbackToDestructiveMigration().build()
+
+    @nbpList
+    @Singleton
+    @Provides
+    fun provideNbpCurrencyDateBase(
+        @ApplicationContext context: Context
+    ): CurrencyDataBase =
+        Room.databaseBuilder(context, CurrencyDataBase::class.java, Constants.NBP_DATABASE)
+            .fallbackToDestructiveMigration().build()
+
+    @myList
+    @Singleton
+    @Provides
+    fun provideMyCurrencyDao(
+        @myList myCurrencyDataBase: CurrencyDataBase,
+    ) : CurrencyDao = myCurrencyDataBase.currencyDao()
+
+    @cryptoList
+    @Singleton
+    @Provides
+    fun provideCryptoCurrencyDao(
+        @cryptoList cryptoCurrencyDataBase: CurrencyDataBase,
+    ) : CurrencyDao = cryptoCurrencyDataBase.currencyDao()
+
+    @nbpList
+    @Singleton
+    @Provides
+    fun provideNBPCurrencyDao(
+        @nbpList nbpCurrencyDataBase: CurrencyDataBase,
+    ) : CurrencyDao = nbpCurrencyDataBase.currencyDao()
 
     @Singleton
     @Provides
     fun provideCurrencyDbRepository (
-        currencyDao: CurrencyDao
-    ) : CurrencyDbRepository = CurrencyDbRepositoryImpl(currencyDao)
+        @nbpList nbpCurrencyDataBase: CurrencyDao,
+        @cryptoList cryptoCurrencyDataBase: CurrencyDao,
+        @myList myCurrencyDataBase: CurrencyDao
+    ) : CurrencyDbRepository = CurrencyDbRepositoryImpl(nbpCurrencyDataBase,cryptoCurrencyDataBase,myCurrencyDataBase)
 }
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class myList
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class cryptoList
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class nbpList
