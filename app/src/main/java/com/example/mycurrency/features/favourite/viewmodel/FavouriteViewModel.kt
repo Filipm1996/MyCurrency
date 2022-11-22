@@ -25,7 +25,7 @@ class FavouriteViewModel @Inject constructor(
     private val currencyDbRepository: CurrencyDbRepository,
     private val networkRepository: NetworkRepository
 ) : ViewModel() {
-
+    val currencyToShow = mutableStateOf<Currency?>(null)
     private val todaysDate = LocalDateTime.now()
     val listOfCurrenciesToDisplay = mutableStateListOf<Currency>()
     val loading = mutableStateOf(false)
@@ -91,6 +91,35 @@ class FavouriteViewModel @Inject constructor(
             currencyDbRepository.deleteMyCurrencyByName(currency.name)
             listOfCurrenciesToDisplay.remove(currency)
         }
+
+    fun getCurrencyRateByName(localDate: LocalDate, currency: Currency) {
+        if(currency.typeOfCurrency == "crypto"){
+            viewModelScope.launch {
+                val unixFrom =
+                    localDate.minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
+                val unixTo = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
+                val response =
+                    networkRepository.getSingleRecordFromCoinGecko(currency, unixFrom, unixTo)
+                when (response) {
+                    is Resource.Success -> currencyToShow.value = response.data
+                    else -> {
+                        error.value = response.message ?: "error"
+                    }
+                }
+            }
+        }else {
+            viewModelScope.launch {
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                val formattedDate = localDate.format(formatter)
+                val response =
+                    networkRepository.getSingleRecordFromNBPByTime(currency.shortName, formattedDate.toString())
+                when (response) {
+                    is Resource.Success -> currencyToShow.value = response.data
+                    else -> error.value = response.message ?: "error"
+                }
+            }
+        }
+    }
 
     private fun updateCurrency(currencyToAdd: Currency) {
         viewModelScope.launch {

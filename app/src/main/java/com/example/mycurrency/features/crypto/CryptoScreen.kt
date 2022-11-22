@@ -1,6 +1,5 @@
 package com.example.mycurrency.features
 
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -28,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mycurrency.R
-import com.example.mycurrency.data.storage.entities.Currency
 import com.example.mycurrency.features.crypto.viewmodel.CryptoViewModel
 import com.example.mycurrency.ui.theme.CardItem
 import com.example.mycurrency.ui.theme.ShowError
