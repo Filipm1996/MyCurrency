@@ -19,21 +19,31 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.mycurrency.data.storage.entities.Currency
 import com.example.mycurrency.features.CryptoScreen
 import com.example.mycurrency.features.FavouriteScreen
 import com.example.mycurrency.features.NbpScreen
+import com.example.mycurrency.features.currencyinfo.CurrencyInfoScreen
+import com.squareup.moshi.Moshi
 
 @Composable
 fun Navigation(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "nbp") {
-        composable("crypto") {
-            CryptoScreen()
+        composable(Screen.CryptoSceen.route) {
+            CryptoScreen(navController = navController)
         }
-        composable("favourite") {
-            FavouriteScreen()
+        composable(Screen.MySceen.route) {
+            FavouriteScreen(navController = navController)
         }
-        composable("nbp") {
-            NbpScreen()
+        composable(Screen.NBPScreen.route) {
+            NbpScreen(navController = navController)
+        }
+        composable(route = Screen.InfoScreen.route) { backStackEntry ->
+            val currencyJson =  backStackEntry.arguments?.getString("currency")
+            val moshi = Moshi.Builder().build()
+            val jsonAdapter = moshi.adapter(Currency::class.java).lenient()
+            val currency = jsonAdapter.fromJson(currencyJson!!)
+            CurrencyInfoScreen(currency!!)
         }
     }
 }

@@ -2,9 +2,9 @@ package com.example.mycurrency.data.storage.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.LocalDateTime
+import com.squareup.moshi.JsonClass
 
-
+@JsonClass(generateAdapter = true)
 @Entity(tableName = "currencyTable")
 data class Currency (
     val name : String,

@@ -5,9 +5,7 @@ import com.example.currencies.data.Retrofit.CoinGecko.CoinGeckoAPI
 import com.example.currencies.data.Retrofit.NBP.NBPapi
 import com.example.mycurrency.common.Resource
 import com.example.mycurrency.data.storage.entities.Currency
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import javax.inject.Inject
 
 class NetworkRepositoryImpl @Inject constructor(
@@ -60,6 +58,24 @@ class NetworkRepositoryImpl @Inject constructor(
                 addDate = todaysDate.toString()
             )
             Resource.Success(currency)
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "Error")
+        }
+    }
+
+    override suspend fun get5DaysRecordFromCoinGecko(
+        currency: Currency,
+        from: Long,
+        to: Long
+    ): Resource<Map<Double,Double>> {
+        return try {
+            val response =
+                coinGeckoAPI.getSingleRecordFromCoinGeckoByTime(currency.idCoingGecko!!, from, to)
+                val newMapOfPrices = mutableMapOf<Double,Double>()
+                response.prices.forEach {
+                    newMapOfPrices[it[0]] = it[1]
+                }
+            Resource.Success(newMapOfPrices)
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Error")
         }

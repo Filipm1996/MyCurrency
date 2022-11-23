@@ -6,13 +6,23 @@ import java.time.LocalDate
 
 interface NetworkRepository {
 
-    suspend fun getRecordsFromCoinGecko(page : String) : Resource<List<Currency>>
+    suspend fun getRecordsFromCoinGecko(page: String): Resource<List<Currency>>
 
-    suspend fun getSingleRecordFromCoinGecko(currency: Currency, from: Long, to : Long) : Resource<Currency>
+    suspend fun getSingleRecordFromCoinGecko(
+        currency: Currency,
+        from: Long,
+        to: Long
+    ): Resource<Currency>
 
-    suspend fun getRecordsFromNBP() : Resource<List<Currency>>
+    suspend fun get5DaysRecordFromCoinGecko(
+        currency: Currency,
+        from: Long,
+        to: Long
+    ): Resource<Map<Double,Double>>
 
-    suspend fun getSingleRecordFromNBPByTime(name :String, date: String) : Resource<Currency>
+    suspend fun getRecordsFromNBP(): Resource<List<Currency>>
 
-    suspend fun getSingleRecordFromNBP (name:String) : Resource<Currency>
+    suspend fun getSingleRecordFromNBPByTime(name: String, date: String): Resource<Currency>
+
+    suspend fun getSingleRecordFromNBP(name: String): Resource<Currency>
 }

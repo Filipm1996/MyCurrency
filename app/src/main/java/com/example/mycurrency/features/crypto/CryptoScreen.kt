@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.mycurrency.R
 import com.example.mycurrency.features.crypto.viewmodel.CryptoViewModel
 import com.example.mycurrency.ui.theme.CardItem
@@ -34,6 +35,7 @@ import java.time.LocalDate
 
 @Composable
 fun CryptoScreen(
+    navController: NavController,
     viewModel: CryptoViewModel = hiltViewModel()
 ) {
     val showAddCurrencyDialogState = remember {
@@ -225,6 +227,7 @@ fun CryptoScreen(
                     Button(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
+                            Toast.makeText(context,"Dodano ${currencyToShow.value!!.name} do ulubionych", Toast.LENGTH_SHORT).show()
                             viewModel.insertMyCurrency(currencyToShow.value!!)
                             showAddCurrencyDialogState.value = false
                         }

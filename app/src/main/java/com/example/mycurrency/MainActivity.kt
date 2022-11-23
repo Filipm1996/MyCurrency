@@ -12,6 +12,7 @@ import com.example.mycurrency.ui.theme.MyCurrencyTheme
 import com.example.mycurrency.ui.theme.navigation.BottomNavItem
 import com.example.mycurrency.ui.theme.navigation.BottomNavigationBar
 import com.example.mycurrency.ui.theme.navigation.Navigation
+import com.example.mycurrency.ui.theme.navigation.Screen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,17 +30,17 @@ class MainActivity : ComponentActivity() {
                             items = listOf(
                                 BottomNavItem(
                                     name = "Cryptocurrencies",
-                                    route = "crypto",
+                                    route = Screen.CryptoSceen.route,
                                     icon = painterResource(id = R.drawable.bitcoin_btc_logo)
                                 ),
                                 BottomNavItem(
                                     name = "Favourites",
-                                    route = "favourite",
+                                    route = Screen.MySceen.route,
                                     icon = painterResource(id = R.drawable.ic_baseline_person_24),
                                 ),
                                 BottomNavItem(
                                     name = "All NBP",
-                                    route = "nbp",
+                                    route = Screen.NBPScreen.route,
                                     icon = painterResource(id = R.drawable.ic_baseline_list_24),
                                 ),
                             ),

@@ -25,8 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.mycurrency.R
-import com.example.mycurrency.data.storage.entities.Currency
 import com.example.mycurrency.features.nbp.viewmodel.NbpViewModel
 import com.example.mycurrency.ui.theme.CardItem
 import com.example.mycurrency.ui.theme.ShowError
@@ -36,6 +36,7 @@ import java.time.LocalDate
 @Destination
 @Composable
 fun NbpScreen(
+    navController: NavController,
      viewModel : NbpViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit){
@@ -224,6 +225,7 @@ fun NbpScreen(
                     Button(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
+                            Toast.makeText(context,"Dodano ${currencyToShow.value!!.name} do ulubionych", Toast.LENGTH_SHORT).show()
                             viewModel.insertMyCurrency(currencyToShow.value!!)
                             showAddCurrencyDialogState.value = false
                         }
