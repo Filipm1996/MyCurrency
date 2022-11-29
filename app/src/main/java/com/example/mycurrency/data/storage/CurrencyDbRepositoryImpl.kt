@@ -16,7 +16,7 @@ class CurrencyDbRepositoryImpl @Inject constructor(
 
     override suspend fun getMyAllCurrencies() = myDao.getAllCurrencies()
 
-    override fun deleteMyCurrencyByName(name: String) = myDao.deleteCurrencyByName(name)
+    override suspend fun deleteMyCurrencyByName(name: String) = myDao.deleteCurrencyByName(name)
 
     override suspend fun deleteMyCurrencies() = myDao.deleteAll()
 

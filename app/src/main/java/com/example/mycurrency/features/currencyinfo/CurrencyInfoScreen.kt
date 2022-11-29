@@ -23,7 +23,10 @@ import com.example.mycurrency.R
 import com.example.mycurrency.data.storage.entities.Currency
 import com.example.mycurrency.features.currencyinfo.viewmodel.CurrencyInfoViewModel
 import com.example.mycurrency.ui.theme.Graph
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun CurrencyInfoScreen(
@@ -40,16 +43,6 @@ fun CurrencyInfoScreen(
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
-        if (viewModel.listForChart.isNotEmpty()) {
-            Graph(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp),
-                viewModel.listForChart.keys.toList(),
-                viewModel.listForChart.values.toList(),
-                10.dp
-            )
-        }
         Column(
             verticalArrangement = Arrangement.Center
         ) {
@@ -126,6 +119,70 @@ fun CurrencyInfoScreen(
                     color = Color.Black
                 )
             }
+            if (viewModel.showGraph.value) {
+                val transformedLists = transformLists(viewModel.listForChart.toMap())
+                val listOfPrices = transformedLists[0] as List<Int>
+                val listOfDates = transformedLists[1] as List<String>
+                val verticalStep = calculateVerticalStep(listOfPrices)
+                val yValues = yValuesCalculate(listOfPrices,verticalStep)
+                val points = (0..9).map {
+                    it + 1
+                }
+                Graph(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(500.dp)
+                        .padding(top = 20.dp),
+                    xValues = points ,
+                    yValues = yValues,
+                    points = listOfPrices,
+                    paddingSpace = 16.dp,
+                    verticalStep = verticalStep
+                )
+            }
         }
     }
 }
+
+fun yValuesCalculate(listOfPrices: List<Int>, verticalStep: Int): List<Int> {
+    val min = listOfPrices.min()
+    val yValues = (1..10).map {
+        min + it * verticalStep
+    }
+    return yValues
+}
+
+fun calculateVerticalStep(listOfPrices: List<Int>): Int {
+    val min = listOfPrices.min()
+    val max = listOfPrices.max()
+    return (max - min)/10
+}
+
+fun transformLists(listForChart: Map<Double, Double>) : List<Any> {
+    val prices = listForChart.values.toList()
+    val dates = listForChart.keys.toList()
+    val newPrices = mutableListOf<Int>()
+    val stringDates = toDates(dates)
+    val step = listForChart.size/10
+    newPrices.add(prices.first().toInt())
+    for(i in 1..8){
+        val mutlipleStep = step * i
+        newPrices.add(prices[mutlipleStep].toInt())
+    }
+    newPrices.add(prices.last().toInt())
+    return listOf(newPrices,stringDates)
+}
+
+fun toDates(toList: List<Double>): List<String> {
+    val newListOfDates = mutableListOf<String>()
+    val formatter = DateTimeFormatter.ofPattern("MM/dd")
+    toList.forEach {
+        val dt = Instant.ofEpochSecond(it.toLong())
+            .atZone(ZoneId.systemDefault())
+            .toLocalDateTime()
+        val formatted = dt.format(formatter).toString()
+        newListOfDates.add(formatted)
+    }
+    return newListOfDates
+}
+

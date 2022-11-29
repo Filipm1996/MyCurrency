@@ -34,20 +34,14 @@ class FavouriteViewModel @Inject constructor(
     fun getMyAllCurrencies() = viewModelScope.launch {
         val listOfCurrencies = currencyDbRepository.getMyAllCurrencies()
         val isUpToDate = checkIfDateIsRight(listOfCurrencies)
-        if (!isUpToDate) {
+        if (isUpToDate) {
             listOfCurrencies.forEach { listOfCurrenciesToDisplay.add(it) }
         } else {
-            val unixFrom = LocalDate.now().minusDays(1).atStartOfDay(ZoneId.systemDefault())
-                .toInstant().epochSecond
-            val unixTo =
-                LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
             val responseFromNBP = networkRepository.getRecordsFromNBP()
             listOfCurrencies.forEach { currency ->
                 if (currency.typeOfCurrency == "crypto") {
                     val responseFromCoinGecko = networkRepository.getSingleRecordFromCoinGecko(
-                        currency,
-                        unixFrom,
-                        unixTo
+                        currency
                     )
                     when (responseFromCoinGecko) {
                         is Resource.Success -> {
@@ -95,12 +89,8 @@ class FavouriteViewModel @Inject constructor(
     fun getCurrencyRateByName(localDate: LocalDate, currency: Currency) {
         viewModelScope.launch {
             if (currency.typeOfCurrency == "crypto") {
-                val unixFrom =
-                    localDate.minusDays(1).atStartOfDay(ZoneId.systemDefault())
-                        .toInstant().epochSecond
-                val unixTo = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
                 val response =
-                    networkRepository.getSingleRecordFromCoinGecko(currency, unixFrom, unixTo)
+                    networkRepository.getSingleRecordFromCoinGecko(currency)
                 when (response) {
                     is Resource.Success -> {
                         currencyToShow.value = response.data
@@ -127,12 +117,8 @@ class FavouriteViewModel @Inject constructor(
 
     private fun updateCurrency(currencyToAdd: Currency) {
         viewModelScope.launch {
-            updateCurrency(currencyToAdd)
-            currencyDbRepository.updateCurrency(
-                currencyToAdd.name,
-                todaysDate.toString(),
-                currencyToAdd.rate
-            )
+            currencyDbRepository.deleteMyCurrencyByName(currencyToAdd.name)
+            currencyDbRepository.insertMyCurrency(currencyToAdd)
             listOfCurrenciesToDisplay.add(currencyToAdd)
         }
     }
@@ -148,9 +134,8 @@ class FavouriteViewModel @Inject constructor(
     private fun checkIfDateIsRight(listOfCurrencies: List<Currency>): Boolean {
         return if (listOfCurrencies.isNotEmpty()) {
             ChronoUnit.HOURS.between(
-                todaysDate,
-                convertToDate(listOfCurrencies[0].addDate)
-            ) >= 6
+                convertToDate(listOfCurrencies[0].addDate),
+                todaysDate) >= 6
         } else {
             false
         }

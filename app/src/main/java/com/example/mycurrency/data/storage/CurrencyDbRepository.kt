@@ -8,7 +8,7 @@ interface CurrencyDbRepository {
 
     suspend fun getMyAllCurrencies(): List<Currency>
 
-    fun deleteMyCurrencyByName (name : String)
+    suspend fun deleteMyCurrencyByName (name : String)
 
     suspend fun deleteMyCurrencies()
 

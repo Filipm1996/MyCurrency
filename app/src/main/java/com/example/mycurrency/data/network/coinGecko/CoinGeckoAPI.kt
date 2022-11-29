@@ -11,11 +11,10 @@ interface CoinGeckoAPI {
     @GET("coins/markets?vs_currency=pln&sparkline=false")
     suspend fun getRecordsFromCoinGecko(@Query("page") page: String): AllRatesResponse
 
-
-    @GET("coins/{id}/market_chart/range?vs_currency=pln")
+    @GET("coins/{id}/market_chart")
     suspend fun getSingleRecordFromCoinGeckoByTime(
         @Path("id") id: String,
-        @Query("from") from: Long,
-        @Query("to") to: Long
+        @Query("vs_currency") vsCurrency: String,
+        @Query("days") days: String
     ): HistoricalRateResponse
 }

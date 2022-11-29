@@ -7,7 +7,7 @@ import com.example.mycurrency.data.storage.entities.Currency
 
 @Database(
     entities =[Currency::class],
-    version =1,
+    version =2,
     exportSchema = false
 )
 

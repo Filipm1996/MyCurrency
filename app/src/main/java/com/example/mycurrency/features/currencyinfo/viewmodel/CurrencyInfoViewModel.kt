@@ -21,23 +21,21 @@ class CurrencyInfoViewModel @Inject constructor(
     private val currencyDbRepository: CurrencyDbRepository
 ) : ViewModel() {
     val currencyToShow = mutableStateOf<Currency?>(null)
+    val showGraph = mutableStateOf(false)
     var listForChart = mutableStateMapOf<Double,Double>()
     val loading = mutableStateOf(false)
     val error = mutableStateOf("")
 
     fun getCryptoRecordsFrom5Days(currency: Currency) {
         viewModelScope.launch {
-            val date = LocalDate.now()
-            val unixFrom =
-                date.minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
-            val unixTo = date.atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
             val response =
-                networkRepository.get5DaysRecordFromCoinGecko(currency, unixFrom, unixTo)
+                networkRepository.get5DaysRecordFromCoinGecko(currency)
             when (response) {
                 is Resource.Success -> {
                     response.data?.forEach { (date, price) ->
                         listForChart[date] = price
                     }
+                    showGraph.value = true
                 }
                 else -> {
                     error.value = response.message ?: "error"
@@ -49,12 +47,8 @@ class CurrencyInfoViewModel @Inject constructor(
     fun getCurrencyRateByName(localDate: LocalDate, currency: Currency) {
         viewModelScope.launch {
             if (currency.typeOfCurrency == "crypto") {
-                val unixFrom =
-                    localDate.minusDays(1).atStartOfDay(ZoneId.systemDefault())
-                        .toInstant().epochSecond
-                val unixTo = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
                 val response =
-                    networkRepository.getSingleRecordFromCoinGecko(currency, unixFrom, unixTo)
+                    networkRepository.getSingleRecordFromCoinGecko(currency)
                 when (response) {
                     is Resource.Success -> {
                         currencyToShow.value = response.data

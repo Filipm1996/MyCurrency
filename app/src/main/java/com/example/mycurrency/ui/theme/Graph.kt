@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
@@ -21,10 +22,13 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun Graph(
     modifier: Modifier,
-    xValues: List<Double>,
-    yValues: List<Double>,
+    xValues: List<Int>,
+    yValues: List<Int>,
+    points : List<Int>,
     paddingSpace: Dp,
+    verticalStep : Int
 ) {
+    val min = points.min()
     val controlPoints1 = mutableListOf<PointF>()
     val controlPoints2 = mutableListOf<PointF>()
     val coordinates = mutableListOf<PointF>()
@@ -66,12 +70,31 @@ fun Graph(
                     textPaint
                 )
             }
-            /** calculating the connection points */
-            for (i in 1 until coordinates.size) {
-                controlPoints1.add(PointF((coordinates[i].x + coordinates[i - 1].x) / 2, coordinates[i - 1].y))
-                controlPoints2.add(PointF((coordinates[i].x + coordinates[i - 1].x) / 2, coordinates[i].y))
+            /** placing our x axis points */
+            for (i in points.indices) {
+                val x1 = xAxisSpace * xValues[i]
+                val y1 = size.height - (yAxisSpace * ((points[i] - min)/verticalStep.toFloat()))
+                if(coordinates.size < 10){
+                    coordinates.add(PointF(x1,y1))
+                }
+                /** drawing circles to indicate all the points */
+                drawCircle(
+                    color = Color.Red,
+                    radius = 10f,
+                    center = Offset(x1,y1)
+                )
             }
+            /** calculating the connection points */
+            if(controlPoints1.isEmpty() && controlPoints2.isEmpty()){
+                for (i in 1 until coordinates.size) {
+                    controlPoints1.add(PointF((coordinates[i].x + coordinates[i - 1].x) / 2, coordinates[i - 1].y))
+                    controlPoints2.add(PointF((coordinates[i].x + coordinates[i - 1].x) / 2, coordinates[i].y))
+                }
+            }
+
             /** drawing the path */
+            println(coordinates.size)
+            println(controlPoints1.size)
             val stroke = Path().apply {
                 reset()
                 moveTo(coordinates.first().x, coordinates.first().y)
@@ -87,7 +110,7 @@ fun Graph(
             val fillPath = android.graphics.Path(stroke.asAndroidPath())
                 .asComposePath()
                 .apply {
-                    lineTo((xAxisSpace * xValues.last()).toFloat(), size.height - yAxisSpace)
+                    lineTo((xAxisSpace * xValues.last()), size.height - yAxisSpace)
                     lineTo(xAxisSpace, size.height - yAxisSpace)
                     close()
                 }

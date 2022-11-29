@@ -40,12 +40,10 @@ class NetworkRepositoryImpl @Inject constructor(
 
     override suspend fun getSingleRecordFromCoinGecko(
         currency: Currency,
-        from: Long,
-        to: Long
     ): Resource<Currency> {
         return try {
             val response =
-                coinGeckoAPI.getSingleRecordFromCoinGeckoByTime(currency.idCoingGecko!!, from, to)
+                coinGeckoAPI.getSingleRecordFromCoinGeckoByTime(currency.idCoingGecko!!, "pln", "1")
             val length = response.prices.size
             val price = String.format("%.4f", response.prices[length - 1][1])
             price.replace(",", ".")
@@ -65,16 +63,14 @@ class NetworkRepositoryImpl @Inject constructor(
 
     override suspend fun get5DaysRecordFromCoinGecko(
         currency: Currency,
-        from: Long,
-        to: Long
-    ): Resource<Map<Double,Double>> {
+    ): Resource<Map<Double, Double>> {
         return try {
             val response =
-                coinGeckoAPI.getSingleRecordFromCoinGeckoByTime(currency.idCoingGecko!!, from, to)
-                val newMapOfPrices = mutableMapOf<Double,Double>()
-                response.prices.forEach {
-                    newMapOfPrices[it[0]] = it[1]
-                }
+                coinGeckoAPI.getSingleRecordFromCoinGeckoByTime(currency.idCoingGecko!!, "pln", "5")
+            val newMapOfPrices = mutableMapOf<Double, Double>()
+            response.prices.forEach {
+                newMapOfPrices[it[0]] = it[1]
+            }
             Resource.Success(newMapOfPrices)
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Error")
@@ -82,7 +78,6 @@ class NetworkRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getRecordsFromNBP(): Resource<List<Currency>> {
-        println(todaysDate.toString())
         val listOfCurrencies = mutableListOf<Currency>()
         return try {
             val response = nbPapi.getNBPrecords()

@@ -15,7 +15,7 @@ interface CurrencyDao {
     suspend fun getAllCurrencies(): List<Currency>
 
     @Query("DELETE FROM currencyTable WHERE name= :name")
-    fun deleteCurrencyByName (name : String)
+    suspend fun deleteCurrencyByName (name : String)
 
     @Query("DELETE FROM currencyTable")
     suspend fun deleteAll()

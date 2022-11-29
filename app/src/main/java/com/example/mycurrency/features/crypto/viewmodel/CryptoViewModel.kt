@@ -93,7 +93,7 @@ class CryptoViewModel @Inject constructor(
                 date.minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
             val unixTo = date.atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
             val response =
-                networkRepository.getSingleRecordFromCoinGecko(currency, unixFrom, unixTo)
+                networkRepository.getSingleRecordFromCoinGecko(currency)
             when (response) {
                 is Resource.Success -> currencyToShow.value = response.data
                 else -> {
