@@ -24,9 +24,10 @@ fun Graph(
     modifier: Modifier,
     xValues: List<Int>,
     yValues: List<Int>,
-    points : List<Int>,
+    points: List<Int>,
+    dates: List<String>,
     paddingSpace: Dp,
-    verticalStep : Int
+    verticalStep: Int
 ) {
     val min = points.min()
     val controlPoints1 = mutableListOf<PointF>()
@@ -52,60 +53,65 @@ fun Graph(
         ) {
             val xAxisSpace = (size.width - paddingSpace.toPx()) / xValues.size
             val yAxisSpace = size.height / yValues.size
+            val datesSpace = (size.width - 3 * xAxisSpace - paddingSpace.toPx()) / dates.size
             /** placing x axis points */
-            for (i in xValues.indices) {
+            for (i in dates.indices) {
                 drawContext.canvas.nativeCanvas.drawText(
-                    "${xValues[i]}",
-                    xAxisSpace * (i + 1),
+                    "${dates[i]}",
+                    datesSpace * (i + 1),
                     size.height - 30,
                     textPaint
                 )
             }
             /** placing y axis points */
-            for (i in yValues.indices) {
+            for (i in 0..(yValues.size / 3)) {
                 drawContext.canvas.nativeCanvas.drawText(
-                    "${yValues[i]}",
+                    "${yValues[3 * i]}",
                     paddingSpace.toPx() / 2f,
-                    size.height - yAxisSpace * (i + 1),
+                    size.height - 3 * yAxisSpace * (i + 1),
                     textPaint
                 )
             }
             /** placing our x axis points */
             for (i in points.indices) {
-                val x1 = xAxisSpace * xValues[i]
-                val y1 = size.height - (yAxisSpace * ((points[i] - min)/verticalStep.toFloat()))
-                if(coordinates.size < 10){
-                    coordinates.add(PointF(x1,y1))
+                val x1 = 2 * xAxisSpace + xAxisSpace * xValues[i]
+                val y1 =
+                    size.height - 3 * yAxisSpace - (yAxisSpace * ((points[i] - min) / verticalStep.toFloat()))
+                if (coordinates.size < 30) {
+                    coordinates.add(PointF(x1, y1))
                 }
-                /** drawing circles to indicate all the points */
-                drawCircle(
-                    color = Color.Red,
-                    radius = 10f,
-                    center = Offset(x1,y1)
-                )
             }
             /** calculating the connection points */
-            if(controlPoints1.isEmpty() && controlPoints2.isEmpty()){
+            if (controlPoints1.isEmpty() && controlPoints2.isEmpty()) {
                 for (i in 1 until coordinates.size) {
-                    controlPoints1.add(PointF((coordinates[i].x + coordinates[i - 1].x) / 2, coordinates[i - 1].y))
-                    controlPoints2.add(PointF((coordinates[i].x + coordinates[i - 1].x) / 2, coordinates[i].y))
+                    controlPoints1.add(
+                        PointF(
+                            (coordinates[i].x + coordinates[i - 1].x) / 2,
+                            coordinates[i - 1].y
+                        )
+                    )
+                    controlPoints2.add(
+                        PointF(
+                            (coordinates[i].x + coordinates[i - 1].x) / 2,
+                            coordinates[i].y
+                        )
+                    )
                 }
             }
 
             /** drawing the path */
-            println(coordinates.size)
-            println(controlPoints1.size)
             val stroke = Path().apply {
                 reset()
                 moveTo(coordinates.first().x, coordinates.first().y)
                 for (i in 0 until coordinates.size - 1) {
                     cubicTo(
-                        controlPoints1[i].x,controlPoints1[i].y,
-                        controlPoints2[i].x,controlPoints2[i].y,
-                        coordinates[i + 1].x,coordinates[i + 1].y
+                        controlPoints1[i].x, controlPoints1[i].y,
+                        controlPoints2[i].x, controlPoints2[i].y,
+                        coordinates[i + 1].x, coordinates[i + 1].y
                     )
                 }
             }
+
             /** filling the area under the path */
             val fillPath = android.graphics.Path(stroke.asAndroidPath())
                 .asComposePath()
@@ -118,7 +124,7 @@ fun Graph(
                 fillPath,
                 brush = Brush.verticalGradient(
                     listOf(
-                        Color.Cyan,
+                        Color.LightGray,
                         Color.Transparent,
                     ),
                     endY = size.height - yAxisSpace

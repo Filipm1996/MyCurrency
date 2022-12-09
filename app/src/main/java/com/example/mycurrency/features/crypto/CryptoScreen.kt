@@ -42,6 +42,9 @@ fun CryptoScreen(
         mutableStateOf(false)
     }
     val currencyToShow = viewModel.currencyToShow
+    val dayFromToday = remember {
+        mutableStateOf(0)
+    }
     val dateInDialog = remember {
         mutableStateOf(LocalDate.now())
     }
@@ -150,8 +153,9 @@ fun CryptoScreen(
                                 )
                                 .clickable {
                                     dateInDialog.value = dateInDialog.value.minusDays(1)
+                                    dayFromToday.value = dayFromToday.value + 1
                                     viewModel.getRecordFromCoinGeckoByDate(
-                                        dateInDialog.value,
+                                        dayFromToday.value,
                                         currencyToShow.value!!
                                     )
                                 },
@@ -173,8 +177,9 @@ fun CryptoScreen(
                                 .clickable {
                                     if (dateInDialog.value != LocalDate.now()) {
                                         dateInDialog.value = dateInDialog.value.plusDays(1)
+                                        dayFromToday.value = dayFromToday.value - 1
                                         viewModel.getRecordFromCoinGeckoByDate(
-                                            dateInDialog.value,
+                                            dayFromToday.value,
                                             currencyToShow.value!!
                                         )
                                     } else {

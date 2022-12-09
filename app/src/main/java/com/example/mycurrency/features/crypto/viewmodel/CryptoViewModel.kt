@@ -87,15 +87,15 @@ class CryptoViewModel @Inject constructor(
         }
     }
 
-    fun getRecordFromCoinGeckoByDate(date: LocalDate, currency: Currency) =
+    fun getRecordFromCoinGeckoByDate(daysFromToday: Int, currency: Currency) =
         viewModelScope.launch {
-            val unixFrom =
-                date.minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
-            val unixTo = date.atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
             val response =
-                networkRepository.getSingleRecordFromCoinGecko(currency)
+                networkRepository.getSingleRecordFromCoinGecko(daysFromToday.toString(),currency)
             when (response) {
-                is Resource.Success -> currencyToShow.value = response.data
+                is Resource.Success -> {
+                    println(response.data?.rate ?: "nnull")
+                    currencyToShow.value = response.data
+                }
                 else -> {
                     error.value = response.message ?: "error"
                 }

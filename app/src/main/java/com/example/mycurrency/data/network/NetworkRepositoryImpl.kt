@@ -39,13 +39,16 @@ class NetworkRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSingleRecordFromCoinGecko(
+        day : String,
         currency: Currency,
     ): Resource<Currency> {
         return try {
+            println(day)
             val response =
-                coinGeckoAPI.getSingleRecordFromCoinGeckoByTime(currency.idCoingGecko!!, "pln", "1")
+                coinGeckoAPI.getSingleRecordFromCoinGeckoByTime(currency.idCoingGecko!!, "pln", day)
             val length = response.prices.size
-            val price = String.format("%.4f", response.prices[length - 1][1])
+            println(length)
+            val price = String.format("%.4f", response.prices[0][1])
             price.replace(",", ".")
             val currency = Currency(
                 name = currency.name,

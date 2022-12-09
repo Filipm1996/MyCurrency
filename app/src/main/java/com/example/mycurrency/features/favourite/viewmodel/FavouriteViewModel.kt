@@ -41,6 +41,7 @@ class FavouriteViewModel @Inject constructor(
             listOfCurrencies.forEach { currency ->
                 if (currency.typeOfCurrency == "crypto") {
                     val responseFromCoinGecko = networkRepository.getSingleRecordFromCoinGecko(
+                        "1",
                         currency
                     )
                     when (responseFromCoinGecko) {
@@ -90,7 +91,7 @@ class FavouriteViewModel @Inject constructor(
         viewModelScope.launch {
             if (currency.typeOfCurrency == "crypto") {
                 val response =
-                    networkRepository.getSingleRecordFromCoinGecko(currency)
+                    networkRepository.getSingleRecordFromCoinGecko("1",currency)
                 when (response) {
                     is Resource.Success -> {
                         currencyToShow.value = response.data

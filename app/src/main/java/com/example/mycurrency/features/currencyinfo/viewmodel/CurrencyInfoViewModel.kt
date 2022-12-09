@@ -1,5 +1,6 @@
 package com.example.mycurrency.features.currencyinfo.viewmodel
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -22,7 +23,7 @@ class CurrencyInfoViewModel @Inject constructor(
 ) : ViewModel() {
     val currencyToShow = mutableStateOf<Currency?>(null)
     val showGraph = mutableStateOf(false)
-    var listForChart = mutableStateMapOf<Double,Double>()
+    var listForChart = mutableStateListOf<Double>()
     val loading = mutableStateOf(false)
     val error = mutableStateOf("")
 
@@ -32,8 +33,8 @@ class CurrencyInfoViewModel @Inject constructor(
                 networkRepository.get5DaysRecordFromCoinGecko(currency)
             when (response) {
                 is Resource.Success -> {
-                    response.data?.forEach { (date, price) ->
-                        listForChart[date] = price
+                    response.data?.forEach { (_, price) ->
+                        listForChart.add(price)
                     }
                     showGraph.value = true
                 }
@@ -44,11 +45,11 @@ class CurrencyInfoViewModel @Inject constructor(
         }
     }
 
-    fun getCurrencyRateByName(localDate: LocalDate, currency: Currency) {
+    fun getCurrencyRateByName(daysFromToday : Int,localDate: LocalDate, currency: Currency) {
         viewModelScope.launch {
             if (currency.typeOfCurrency == "crypto") {
                 val response =
-                    networkRepository.getSingleRecordFromCoinGecko(currency)
+                    networkRepository.getSingleRecordFromCoinGecko(daysFromToday.toString(),currency)
                 when (response) {
                     is Resource.Success -> {
                         currencyToShow.value = response.data

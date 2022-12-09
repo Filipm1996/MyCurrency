@@ -9,6 +9,7 @@ interface NetworkRepository {
 
 
     suspend fun getSingleRecordFromCoinGecko(
+        day : String,
         currency: Currency,
     ): Resource<Currency>
 
