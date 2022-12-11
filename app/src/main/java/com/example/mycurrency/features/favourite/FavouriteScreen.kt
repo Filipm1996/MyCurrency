@@ -27,6 +27,7 @@ import com.example.mycurrency.R
 import com.example.mycurrency.data.storage.entities.Currency
 import com.example.mycurrency.features.favourite.viewmodel.FavouriteViewModel
 import com.example.mycurrency.ui.theme.CardItem
+import com.example.mycurrency.ui.theme.CurrencyInfoDialog
 import com.example.mycurrency.ui.theme.ShowError
 import com.example.mycurrency.ui.theme.navigation.Screen
 import com.squareup.moshi.Moshi
@@ -39,6 +40,9 @@ fun FavouriteScreen(
 ) {
     val currencyToShow = viewModel.currencyToShow
     val context = LocalContext.current
+    val showDialog = remember {
+        mutableStateOf(false)
+    }
     var text by rememberSaveable { mutableStateOf("") }
     val listOfCurrencies = viewModel.listOfCurrenciesToDisplay
     val loading = viewModel.loading
@@ -48,12 +52,12 @@ fun FavouriteScreen(
     ) {
 
 
-        if (error.value.isNotEmpty()) {
+        if (error.value!="") {
             ShowError(error.value, context)
             error.value = ""
         }
         LaunchedEffect(Unit) {
-            if(listOfCurrencies.isEmpty()) {
+            if (listOfCurrencies.isEmpty()) {
                 viewModel.getMyAllCurrencies()
             }
         }
@@ -108,8 +112,17 @@ fun FavouriteScreen(
                     val item = listOfCurrencies[it]
                     CardItem(item) {
                         currencyToShow.value = it
-                        val currencyJson = convertToJson(currencyToShow.value!!)
-                        navController.navigate(Screen.InfoScreen.route.replace("{currency}",currencyJson))
+                        if (it.typeOfCurrency == "crypto") {
+                            val currencyJson = convertToJson(currencyToShow.value!!)
+                            navController.navigate(
+                                Screen.InfoScreen.route.replace(
+                                    "{currency}",
+                                    currencyJson
+                                )
+                            )
+                        } else {
+                            showDialog.value = true
+                        }
                     }
                 }
             }
@@ -121,10 +134,15 @@ fun FavouriteScreen(
                     .align(Alignment.Center),
             )
         }
+        if (showDialog.value) {
+            CurrencyInfoDialog(setShowDialog = {
+                showDialog.value = it
+            }, currencyToShow = currencyToShow.value!!)
+        }
     }
 }
 
-fun convertToJson(value: Currency) : String{
+fun convertToJson(value: Currency): String {
     val moshi = Moshi.Builder().build()
     val jsonAdapter = moshi.adapter(Currency::class.java).lenient()
     return jsonAdapter.toJson(value)

@@ -97,6 +97,7 @@ class CryptoViewModel @Inject constructor(
                     currencyToShow.value = response.data
                 }
                 else -> {
+                    currencyToShow.value = null
                     error.value = response.message ?: "error"
                 }
             }

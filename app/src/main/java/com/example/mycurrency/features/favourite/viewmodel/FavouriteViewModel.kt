@@ -33,8 +33,7 @@ class FavouriteViewModel @Inject constructor(
 
     fun getMyAllCurrencies() = viewModelScope.launch {
         val listOfCurrencies = currencyDbRepository.getMyAllCurrencies()
-        val isUpToDate = checkIfDateIsRight(listOfCurrencies)
-        if (isUpToDate) {
+        if (!checkIfDateIsRight(listOfCurrencies)) {
             listOfCurrencies.forEach { listOfCurrenciesToDisplay.add(it) }
         } else {
             val responseFromNBP = networkRepository.getRecordsFromNBP()
