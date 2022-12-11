@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -30,7 +31,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun CurrencyInfoDialog(
-    setShowDialog : (Boolean) -> Unit,
+    setShowDialog: (Boolean) -> Unit,
     currencyToShow: Currency,
     viewModel: CurrencyInfoViewModel = hiltViewModel()
 ) {
@@ -149,26 +150,14 @@ fun CurrencyInfoDialog(
                             color = Color.Black
                         )
                     }
-                    if (viewModel.showGraph.value) {
-                        val listOfPrices = transformList(viewModel.listForChart.toList())
-                        val listOfDates = toDates()
-                        val verticalStep = calculateVerticalStep(listOfPrices)
-                        val yValues = yValuesCalculate(listOfPrices, verticalStep)
-                        val points = (0..30).map {
-                            it + 1
-                        }
-                        Graph(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(500.dp)
-                                .padding(top = 50.dp),
-                            xValues = points,
-                            yValues = yValues,
-                            points = listOfPrices,
-                            dates = listOfDates,
-                            paddingSpace = 16.dp,
-                            verticalStep = verticalStep
-                        )
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        onClick = {
+                            viewModel.deleteMyCurrencyByName(currencyToShow)
+                        }) {
+                        Text(text = "Usuń z ulubionych")
                     }
                 }
             }

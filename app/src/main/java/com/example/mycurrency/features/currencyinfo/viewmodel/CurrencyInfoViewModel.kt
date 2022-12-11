@@ -10,6 +10,8 @@ import com.example.mycurrency.data.network.NetworkRepository
 import com.example.mycurrency.data.storage.CurrencyDbRepository
 import com.example.mycurrency.data.storage.entities.Currency
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
@@ -73,4 +75,9 @@ class CurrencyInfoViewModel @Inject constructor(
             }
         }
     }
+
+    fun deleteMyCurrencyByName(currency: Currency) =
+        CoroutineScope(Dispatchers.IO).launch {
+            currencyDbRepository.deleteMyCurrencyByName(currency.name)
+        }
 }
