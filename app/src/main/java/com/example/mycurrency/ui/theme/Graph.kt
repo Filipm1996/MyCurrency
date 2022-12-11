@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
@@ -29,7 +28,7 @@ fun Graph(
     paddingSpace: Dp,
     verticalStep: Int
 ) {
-    val min = points.min()
+    val min = (points.min() - (points.min()*0.02)).toInt()
     val controlPoints1 = mutableListOf<PointF>()
     val controlPoints2 = mutableListOf<PointF>()
     val coordinates = mutableListOf<PointF>()
@@ -57,7 +56,7 @@ fun Graph(
             /** placing x axis points */
             for (i in dates.indices) {
                 drawContext.canvas.nativeCanvas.drawText(
-                    "${dates[i]}",
+                    dates[i],
                     datesSpace * (i + 1),
                     size.height - 30,
                     textPaint

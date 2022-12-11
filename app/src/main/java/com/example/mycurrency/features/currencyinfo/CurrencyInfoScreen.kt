@@ -174,17 +174,17 @@ fun CurrencyInfoScreen(
 }
 
 fun yValuesCalculate(listOfPrices: List<Int>, verticalStep: Int): List<Int> {
-    val min = listOfPrices.min()
+    val min = listOfPrices.min() - (listOfPrices.min()*0.02)
     val yValues = (0..30).map {
-        min + it * verticalStep
+        min.toInt() + it * verticalStep
     }
     return yValues
 }
 
 fun calculateVerticalStep(listOfPrices: List<Int>): Int {
-    val min = listOfPrices.min()
-    val max = listOfPrices.max()
-    return (max - min) / 30
+    val min = listOfPrices.min() - (listOfPrices.min()*0.02)
+    val max = listOfPrices.max() +(listOfPrices.max()*0.02)
+    return (max - min).toInt() / 30
 }
 
 fun transformList(listForChart: List<Double>): List<Int> {

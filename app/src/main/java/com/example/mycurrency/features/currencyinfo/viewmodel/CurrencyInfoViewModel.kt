@@ -28,18 +28,20 @@ class CurrencyInfoViewModel @Inject constructor(
     val error = mutableStateOf("")
 
     fun getCryptoRecordsFrom5Days(currency: Currency) {
-        viewModelScope.launch {
-            val response =
-                networkRepository.get5DaysRecordFromCoinGecko(currency)
-            when (response) {
-                is Resource.Success -> {
-                    response.data?.forEach { (_, price) ->
-                        listForChart.add(price)
+        if (listForChart.isEmpty()) {
+            viewModelScope.launch {
+                val response =
+                    networkRepository.get5DaysRecordFromCoinGecko(currency)
+                when (response) {
+                    is Resource.Success -> {
+                        response.data?.forEach { (_, price) ->
+                            listForChart.add(price)
+                        }
+                        showGraph.value = true
                     }
-                    showGraph.value = true
-                }
-                else -> {
-                    error.value = response.message ?: "error"
+                    else -> {
+                        error.value = response.message ?: "error"
+                    }
                 }
             }
         }
