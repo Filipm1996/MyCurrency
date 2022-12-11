@@ -27,7 +27,6 @@ import com.example.mycurrency.R
 import com.example.mycurrency.data.storage.entities.Currency
 import com.example.mycurrency.features.currencyinfo.viewmodel.CurrencyInfoViewModel
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun CurrencyInfoDialog(
@@ -116,7 +115,7 @@ fun CurrencyInfoDialog(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 20.dp),
+                        .padding(top = 10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
@@ -163,47 +162,4 @@ fun CurrencyInfoDialog(
             }
         }
     }
-}
-
-fun yValuesCalculate(listOfPrices: List<Int>, verticalStep: Int): List<Int> {
-    val min = listOfPrices.min()
-    val yValues = (0..30).map {
-        min + it * verticalStep
-    }
-    return yValues
-}
-
-fun calculateVerticalStep(listOfPrices: List<Int>): Int {
-    val min = listOfPrices.min()
-    val max = listOfPrices.max()
-    return (max - min) / 30
-}
-
-fun transformList(listForChart: List<Double>): List<Int> {
-    val prices = listForChart
-    val newPrices = mutableListOf<Int>()
-    val step = listForChart.size / 30
-    newPrices.add(prices.first().toInt())
-    for (i in 1..28) {
-        val mutlipleStep = step * i
-        newPrices.add(prices[mutlipleStep].toInt())
-    }
-    newPrices.add(prices.last().toInt())
-    return newPrices
-}
-
-fun toDates(): List<String> {
-    val now = LocalDate.now()
-    val listOfDates = mutableListOf<LocalDate>()
-    for (i in 4 downTo 1) {
-        listOfDates.add(now.minusDays(i.toLong()))
-    }
-    listOfDates.add(now)
-    val newListOfDates = mutableListOf<String>()
-    val formatter = DateTimeFormatter.ofPattern("MM/dd")
-    listOfDates.forEach { day ->
-        val formatted = day.format(formatter).toString()
-        newListOfDates.add(formatted)
-    }
-    return newListOfDates
 }

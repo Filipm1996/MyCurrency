@@ -39,7 +39,7 @@ class NbpViewModel @Inject constructor(
     fun getSingleRecordFromNBP(name: String) {
         viewModelScope.launch {
             val currencyToFind = listOfCurrenciesToDisplay.find {
-                it.name == name
+                it.name.contains(name, ignoreCase=true)
             }
             if (currencyToFind != null) {
                 listOfCurrenciesToDisplay.clear()
@@ -84,7 +84,10 @@ class NbpViewModel @Inject constructor(
                 networkRepository.getSingleRecordFromNBPByTime(name, formattedDate.toString())
             when (response) {
                 is Resource.Success -> currencyToShow.value = response.data
-                else -> error.value = response.message ?: "error"
+                else -> {
+                    currencyToShow.value!!.rate = ""
+                    error.value = response.message ?: "error"
+                }
             }
         }
     }

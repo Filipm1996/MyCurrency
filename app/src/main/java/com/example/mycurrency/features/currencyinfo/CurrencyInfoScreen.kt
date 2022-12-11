@@ -24,9 +24,7 @@ import com.example.mycurrency.R
 import com.example.mycurrency.data.storage.entities.Currency
 import com.example.mycurrency.features.currencyinfo.viewmodel.CurrencyInfoViewModel
 import com.example.mycurrency.ui.theme.Graph
-import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Composable

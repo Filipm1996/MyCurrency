@@ -35,7 +35,6 @@ import java.time.LocalDate
 
 @Composable
 fun CryptoScreen(
-    navController: NavController,
     viewModel: CryptoViewModel = hiltViewModel()
 ) {
     val showAddCurrencyDialogState = remember {
@@ -216,11 +215,10 @@ fun CryptoScreen(
                         )
                     }
                 }
-
             },
             buttons = {
                 Column(
-                    modifier = Modifier.padding(all = 8.dp),
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp,  bottom = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Button(

@@ -21,6 +21,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,10 +37,9 @@ import java.time.LocalDate
 @Destination
 @Composable
 fun NbpScreen(
-    navController: NavController,
-     viewModel : NbpViewModel = hiltViewModel()
+    viewModel: NbpViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         viewModel.getAPIRecords()
     }
     val showAddCurrencyDialogState = remember {
@@ -55,8 +55,8 @@ fun NbpScreen(
     val loading = viewModel.loading
     val error = viewModel.error
 
-    if(error.value.isNotEmpty()){
-        ShowError(error.value,context)
+    if (error.value.isNotEmpty()) {
+        ShowError(error.value, context)
         error.value = ""
     }
     Box(
@@ -72,19 +72,21 @@ fun NbpScreen(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            ) {
                 TextField(modifier = Modifier
                     .weight(1f),
-                    value = text ,
+                    value = text,
                     label = {
                         Text("Wyszukaj walute", color = Color.LightGray)
-                            },
+                    },
                     textStyle = TextStyle.Default.copy(fontSize = 15.sp, color = Color.White),
                     onValueChange = {
                         text = it
-                    } )
+                    })
                 Icon(
                     modifier = Modifier
                         .padding(
@@ -108,10 +110,10 @@ fun NbpScreen(
             LazyColumn(
                 modifier = Modifier.padding(bottom = 60.dp),
                 state = rememberLazyListState()
-            ){
-                items(listOfCurrencies.size){
+            ) {
+                items(listOfCurrencies.size) {
                     val item = listOfCurrencies[it]
-                    CardItem(item){ currency->
+                    CardItem(item) { currency ->
                         currencyToShow.value = currency
                         showAddCurrencyDialogState.value = true
                     }
@@ -197,23 +199,31 @@ fun NbpScreen(
                         Text(
                             text = currencyToShow.value!!.name,
                             textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold,
                             fontSize = 30.sp,
                             color = Color.Black
                         )
-
-                        Text(
-                            text = currencyToShow.value!!.rate,
-                            textAlign = TextAlign.Center,
-                            fontSize = 30.sp,
-                            color = Color.Black
-                        )
+                        if (viewModel.currencyToShow.value!!.rate.isNotEmpty()) {
+                            Text(
+                                text = viewModel.currencyToShow.value!!.rate,
+                                textAlign = TextAlign.Center,
+                                fontSize = 30.sp,
+                                color = Color.Black
+                            )
+                        } else {
+                            Text(
+                                text = "Brak danych",
+                                textAlign = TextAlign.Center,
+                                fontSize = 30.sp,
+                                color = Color.Black
+                            )
+                        }
                     }
                 }
-
             },
             buttons = {
                 Column(
-                    modifier = Modifier.padding(all = 8.dp),
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Button(
@@ -225,7 +235,11 @@ fun NbpScreen(
                     Button(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            Toast.makeText(context,"Dodano ${currencyToShow.value!!.name} do ulubionych", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "Dodano ${currencyToShow.value!!.name} do ulubionych",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             viewModel.insertMyCurrency(currencyToShow.value!!)
                             showAddCurrencyDialogState.value = false
                         }

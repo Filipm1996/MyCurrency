@@ -10,9 +10,7 @@ import com.example.mycurrency.data.storage.CurrencyDbRepository
 import com.example.mycurrency.data.storage.entities.Currency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.ZoneId
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,7 +26,7 @@ class CryptoViewModel @Inject constructor(
     fun getSingleRecordFromCoinGecko(name: String) {
         viewModelScope.launch {
             val currencyToFind = listOfCurrenciesToDisplay.find {
-                it.name == name
+                it.name.contains(name, ignoreCase = true)
             }
             if (currencyToFind != null) {
                 listOfCurrenciesToDisplay.clear()
@@ -90,7 +88,7 @@ class CryptoViewModel @Inject constructor(
     fun getRecordFromCoinGeckoByDate(daysFromToday: Int, currency: Currency) =
         viewModelScope.launch {
             val response =
-                networkRepository.getSingleRecordFromCoinGecko(daysFromToday.toString(),currency)
+                networkRepository.getSingleRecordFromCoinGecko(daysFromToday.toString(), currency)
             when (response) {
                 is Resource.Success -> {
                     println(response.data?.rate ?: "nnull")

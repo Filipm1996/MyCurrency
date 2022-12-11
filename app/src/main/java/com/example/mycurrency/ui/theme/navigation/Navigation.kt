@@ -30,13 +30,13 @@ import com.squareup.moshi.Moshi
 fun Navigation(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "nbp") {
         composable(Screen.CryptoSceen.route) {
-            CryptoScreen(navController = navController)
+            CryptoScreen()
         }
         composable(Screen.MySceen.route) {
             FavouriteScreen(navController = navController)
         }
         composable(Screen.NBPScreen.route) {
-            NbpScreen(navController = navController)
+            NbpScreen()
         }
         composable(route = Screen.InfoScreen.route) { backStackEntry ->
             val currencyJson =  backStackEntry.arguments?.getString("currency")

@@ -69,7 +69,7 @@ class FavouriteViewModel @Inject constructor(
     fun getSingleCurrency(name: String) = viewModelScope.launch {
         viewModelScope.launch {
             val currencyToFind = listOfCurrenciesToDisplay.find {
-                it.name == name
+                it.name.contains(name, ignoreCase=true)
             }
             if (currencyToFind != null) {
                 listOfCurrenciesToDisplay.clear()
@@ -79,12 +79,6 @@ class FavouriteViewModel @Inject constructor(
             }
         }
     }
-
-    fun deleteMyCurrencyByName(currency: Currency) =
-        CoroutineScope(Dispatchers.IO).launch {
-            currencyDbRepository.deleteMyCurrencyByName(currency.name)
-            listOfCurrenciesToDisplay.remove(currency)
-        }
 
     fun getCurrencyRateByName(localDate: LocalDate, currency: Currency) {
         viewModelScope.launch {
