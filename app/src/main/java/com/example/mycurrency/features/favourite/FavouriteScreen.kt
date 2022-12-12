@@ -31,7 +31,6 @@ import com.example.mycurrency.ui.theme.CurrencyInfoDialog
 import com.example.mycurrency.ui.theme.ShowError
 import com.example.mycurrency.ui.theme.navigation.Screen
 import com.squareup.moshi.Moshi
-import java.time.LocalDate
 
 @Composable
 fun FavouriteScreen(
@@ -114,6 +113,7 @@ fun FavouriteScreen(
                         currencyToShow.value = it
                         if (it.typeOfCurrency == "crypto") {
                             val currencyJson = convertToJson(currencyToShow.value!!)
+                            viewModel.listOfCurrenciesToDisplay.clear()
                             navController.navigate(
                                 Screen.InfoScreen.route.replace(
                                     "{currency}",
@@ -135,6 +135,7 @@ fun FavouriteScreen(
             )
         }
         if (showDialog.value) {
+            viewModel.listOfCurrenciesToDisplay.clear()
             CurrencyInfoDialog(setShowDialog = {
                 showDialog.value = it
             }, currencyToShow = currencyToShow.value!!)

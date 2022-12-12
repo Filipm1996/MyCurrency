@@ -68,12 +68,12 @@ class FavouriteViewModel @Inject constructor(
 
     fun getSingleCurrency(name: String) = viewModelScope.launch {
         viewModelScope.launch {
-            val currencyToFind = listOfCurrenciesToDisplay.find {
+            val currenciesToFind = listOfCurrenciesToDisplay.filter {
                 it.name.contains(name, ignoreCase=true)
             }
-            if (currencyToFind != null) {
+            if (currenciesToFind.isNotEmpty()) {
                 listOfCurrenciesToDisplay.clear()
-                listOfCurrenciesToDisplay.add(currencyToFind)
+                listOfCurrenciesToDisplay.addAll(currenciesToFind)
             } else {
                 error.value = "No currency found"
             }

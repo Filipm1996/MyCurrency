@@ -155,7 +155,7 @@ fun CurrencyInfoScreen(
                         yValues = yValues,
                         points = listOfPrices,
                         dates = listOfDates,
-                        paddingSpace = 16.dp,
+                        paddingSpace = 20.dp,
                         verticalStep = verticalStep
                     )
                 }
@@ -173,30 +173,33 @@ fun CurrencyInfoScreen(
     }
 }
 
-fun yValuesCalculate(listOfPrices: List<Int>, verticalStep: Int): List<Int> {
+fun yValuesCalculate(listOfPrices: List<Double>, verticalStep: Double): List<Double> {
     val min = listOfPrices.min() - (listOfPrices.min()*0.02)
     val yValues = (0..30).map {
-        min.toInt() + it * verticalStep
+        min + it * verticalStep
     }
     return yValues
 }
 
-fun calculateVerticalStep(listOfPrices: List<Int>): Int {
+fun calculateVerticalStep(listOfPrices: List<Double>): Double {
     val min = listOfPrices.min() - (listOfPrices.min()*0.02)
     val max = listOfPrices.max() +(listOfPrices.max()*0.02)
-    return (max - min).toInt() / 30
+    return (max - min) / 30
 }
 
-fun transformList(listForChart: List<Double>): List<Int> {
+fun transformList(listForChart: List<Double>): List<Double> {
     val prices = listForChart
-    val newPrices = mutableListOf<Int>()
+    val newPrices = mutableListOf<Double>()
     val step = listForChart.size / 30
-    newPrices.add(prices.first().toInt())
+    newPrices.add(prices.first())
     for (i in 1..28) {
         val mutlipleStep = step * i
-        newPrices.add(prices[mutlipleStep].toInt())
+        newPrices.add(prices[mutlipleStep])
     }
-    newPrices.add(prices.last().toInt())
+    newPrices.add(prices.last())
+    newPrices.forEach{
+        println(it)
+    }
     return newPrices
 }
 

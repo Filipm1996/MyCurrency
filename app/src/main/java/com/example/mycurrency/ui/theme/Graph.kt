@@ -22,13 +22,13 @@ import androidx.compose.ui.unit.sp
 fun Graph(
     modifier: Modifier,
     xValues: List<Int>,
-    yValues: List<Int>,
-    points: List<Int>,
+    yValues: List<Double>,
+    points: List<Double>,
     dates: List<String>,
     paddingSpace: Dp,
-    verticalStep: Int
+    verticalStep: Double
 ) {
-    val min = (points.min() - (points.min()*0.02)).toInt()
+    val min = (points.min() - (points.min()*0.02))
     val controlPoints1 = mutableListOf<PointF>()
     val controlPoints2 = mutableListOf<PointF>()
     val coordinates = mutableListOf<PointF>()
@@ -65,7 +65,7 @@ fun Graph(
             /** placing y axis points */
             for (i in 0..(yValues.size / 3)) {
                 drawContext.canvas.nativeCanvas.drawText(
-                    "${yValues[3 * i]}",
+                    formattedYValue(yValues[3*i]),
                     paddingSpace.toPx() / 2f,
                     size.height - 3 * yAxisSpace * (i + 1),
                     textPaint
@@ -77,7 +77,7 @@ fun Graph(
                 val y1 =
                     size.height - 3 * yAxisSpace - (yAxisSpace * ((points[i] - min) / verticalStep.toFloat()))
                 if (coordinates.size < 30) {
-                    coordinates.add(PointF(x1, y1))
+                    coordinates.add(PointF(x1, y1.toFloat()))
                 }
             }
             /** calculating the connection points */
@@ -138,5 +138,13 @@ fun Graph(
                 )
             )
         }
+    }
+}
+
+fun formattedYValue(d: Double) : String{
+    return if(d > 1000){
+        d.toInt().toString()
+    } else {
+        String.format("%.2f",d)
     }
 }

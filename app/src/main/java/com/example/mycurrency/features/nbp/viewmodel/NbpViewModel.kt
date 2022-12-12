@@ -38,12 +38,12 @@ class NbpViewModel @Inject constructor(
 
     fun getSingleRecordFromNBP(name: String) {
         viewModelScope.launch {
-            val currencyToFind = listOfCurrenciesToDisplay.find {
+            val currenciesToFind = listOfCurrenciesToDisplay.filter {
                 it.name.contains(name, ignoreCase=true)
             }
-            if (currencyToFind != null) {
+            if (currenciesToFind.isNotEmpty()) {
                 listOfCurrenciesToDisplay.clear()
-                listOfCurrenciesToDisplay.add(currencyToFind)
+                listOfCurrenciesToDisplay.addAll(currenciesToFind)
             } else {
                 error.value = "No currency found"
             }

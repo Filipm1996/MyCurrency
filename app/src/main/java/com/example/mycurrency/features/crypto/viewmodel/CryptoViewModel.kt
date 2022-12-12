@@ -25,12 +25,12 @@ class CryptoViewModel @Inject constructor(
 
     fun getSingleRecordFromCoinGecko(name: String) {
         viewModelScope.launch {
-            val currencyToFind = listOfCurrenciesToDisplay.find {
-                it.name.contains(name, ignoreCase = true)
+            val currenciesToFind = listOfCurrenciesToDisplay.filter {
+                it.name.contains(name, ignoreCase=true)
             }
-            if (currencyToFind != null) {
+            if (currenciesToFind.isNotEmpty()) {
                 listOfCurrenciesToDisplay.clear()
-                listOfCurrenciesToDisplay.add(currencyToFind)
+                listOfCurrenciesToDisplay.addAll(currenciesToFind)
             } else {
                 error.value = "No currency found"
             }
